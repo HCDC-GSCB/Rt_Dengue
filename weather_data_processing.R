@@ -88,7 +88,7 @@ missing_wards <- hcm_wards %>%
 if (nrow(missing_wards) > 0) {
   cat("\n⚠️  Phường/xã chưa có dữ liệu:", nrow(missing_wards), "\n")
   print(missing_wards)
-  
+
   # Bảng gán thủ công cho các trường hợp đặc biệt
   # Lý do:
   # - Côn Đảo (71713027): GADM không có polygon đảo xa bờ ~189km,
@@ -96,43 +96,52 @@ if (nrow(missing_wards) > 0) {
   # - Tân Mỹ  (70113082): Centroid GADM lệch ra ngoài polygon mới do sáp nhập,
   #                        gán vào VNM.25.19_1 (Quận 7) vì cách 0.13km
   manual_mapping <- tibble(
-    maXa   = c("71713027",        "70113082"),
-    tenXa  = c("Đặc khu Côn Đảo", "Phường Tân Mỹ"),
-    region = c("VNM.7.6_1",       "VNM.25.19_1"),
-    ly_do  = c("Đảo xa bờ, cùng tỉnh BRVT",
-               "Centroid lệch, cách 0.13km, sáp nhập từ Quận 7")
+    maXa = c("71713027", "70113082"),
+    tenXa = c("Đặc khu Côn Đảo", "Phường Tân Mỹ"),
+    region = c("VNM.7.6_1", "VNM.25.19_1"),
+    ly_do = c(
+      "Đảo xa bờ, cùng tỉnh BRVT",
+      "Centroid lệch, cách 0.13km, sáp nhập từ Quận 7"
+    )
   )
-  
+
   # Tách: có trong bảng thủ công vs chưa có
-  manual_fix  <- missing_wards %>%
-    inner_join(manual_mapping %>% select(maXa, tenXa, region), by = c("maXa", "tenXa"))
-  
+  manual_fix <- missing_wards %>%
+    inner_join(
+      manual_mapping %>% select(maXa, tenXa, region),
+      by = c("maXa", "tenXa")
+    )
+
   auto_fix <- missing_wards %>%
     filter(!maXa %in% manual_mapping$maXa)
-  
+
   cat("\n📍 Gán thủ công:\n")
   print(manual_mapping %>% select(maXa, tenXa, region, ly_do))
-  
+
   # Xử lý các phường còn lại (nếu có) bằng st_nearest_feature
   if (nrow(auto_fix) > 0) {
     cat("\n📍 Phường/xã còn lại dùng region gần nhất:\n")
     print(auto_fix)
-    
+
     auto_fix_sf <- hcm_wards %>%
       filter(maXa %in% auto_fix$maXa) %>%
       st_centroid()
     nearest_idx <- st_nearest_feature(auto_fix_sf, gadm_centroids)
-    
+
     auto_fix_result <- tibble(
       region = hcm_adm3$region[nearest_idx],
-      maXa   = auto_fix_sf$maXa,
-      tenXa  = auto_fix_sf$tenXa
+      maXa = auto_fix_sf$maXa,
+      tenXa = auto_fix_sf$tenXa
     )
     manual_fix <- bind_rows(manual_fix, auto_fix_result)
   }
-  
+
   region_to_ward <- bind_rows(region_to_ward, manual_fix)
-  cat("\n✅ Tổng phường/xã có dữ liệu sau bổ sung:", n_distinct(region_to_ward$maXa), "\n")
+  cat(
+    "\n✅ Tổng phường/xã có dữ liệu sau bổ sung:",
+    n_distinct(region_to_ward$maXa),
+    "\n"
+  )
 }
 
 # Kiểm tra kết quả 2 trường hợp đặc biệt
@@ -144,8 +153,7 @@ region_to_ward %>%
 # BƯỚC 6: GHÉP DỮ LIỆU THỜI TIẾT VỚI MAPPING
 # ============================================================
 weather_with_ward <- weather_hcm_raw %>%
-  inner_join(region_to_ward, by = "region",
-             relationship = "many-to-many")
+  inner_join(region_to_ward, by = "region", relationship = "many-to-many")
 
 # ============================================================
 # OUTPUT 1: THEO TỪNG PHƯỜNG/XÃ MỚI
@@ -153,7 +161,7 @@ weather_with_ward <- weather_hcm_raw %>%
 df_ward <- weather_with_ward %>%
   group_by(time, maXa, tenXa) %>%
   summarise(
-    t2m_C    = round(mean(t2m,    na.rm = TRUE) - 273.15, 2),
+    t2m_C = round(mean(t2m, na.rm = TRUE) - 273.15, 2),
     mn2t24_C = round(mean(mn2t24, na.rm = TRUE) - 273.15, 2),
     mx2t24_C = round(mean(mx2t24, na.rm = TRUE) - 273.15, 2),
     .groups = "drop"
@@ -165,4 +173,3 @@ print(head(df_ward, 10))
 cat("Tổng hàng     :", nrow(df_ward), "\n")
 cat("Số phường/xã  :", n_distinct(df_ward$maXa), "/", nrow(hcm_wards), "\n")
 cat("Số tuần       :", n_distinct(df_ward$time), "\n")
-
