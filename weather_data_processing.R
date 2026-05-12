@@ -1,7 +1,3 @@
-# ============================================================
-# TRÍCH XUẤT DỮ LIỆU THỜI TIẾT ERA5 THEO PHƯỜNG/XÃ TP.HCM MỚI
-# ============================================================
-
 library(stars)
 library(sf)
 library(tidyverse)
@@ -9,9 +5,10 @@ library(units)
 library(terra)
 library(writexl)
 
-# ============================================================
-# BƯỚC 1: ĐỌC VÀ CHUẨN BỊ DỮ LIỆU NetCDF
-# ============================================================
+# TRÍCH XUẤT DỮ LIỆU THỜI TIẾT ERA5 THEO PHƯỜNG/XÃ TP.HCM MỚI -----------------
+
+## BƯỚC 1: ĐỌC VÀ CHUẨN BỊ DỮ LIỆU NetCDF -------------------------------------
+
 nc_dat <- read_ncdf(
   "data/weather/VNM-2-2017-2024-era5.nc",
   var = c("t2m", "mn2t24", "mx2t24")
@@ -27,8 +24,8 @@ weather_df <- as.data.frame(nc_dat) %>%
     mx2t24 = as.numeric(mx2t24)
   )
 
-# ============================================================
-# BƯỚC 2: LỌC 3 TỈNH THUỘC TP.HCM MỚI
+## BƯỚC 2: LỌC 3 TỈNH THUỘC TP.HCM MỚI ----------------------------------------
+
 # VNM.25 = TP.HCM cũ | VNM.9 = Bình Dương | VNM.7 = Bà Rịa - Vũng Tàu
 # ============================================================
 HCM_PREFIXES <- c("VNM\\.25\\.", "VNM\\.9\\.", "VNM\\.7\\.")
@@ -38,8 +35,8 @@ weather_hcm_raw <- weather_df %>%
 
 cat("Số region TP.HCM mới trong NetCDF:", n_distinct(weather_hcm_raw$region), "\n")
 
-# ============================================================
-# BƯỚC 3: ĐỌC GADM LEVEL 3 - TẠO MAPPING region -> đơn vị cũ
+## BƯỚC 3: ĐỌC GADM LEVEL 3 - TẠO MAPPING region -> đơn vị cũ ------------------
+
 # GID_3 dạng "VNM.25.1.1_1" -> rút về "VNM.25.1_1" để khớp NetCDF
 # ============================================================
 vnm_adm3 <- read_rds("data/spatial data/gadm41_VNM_3_pk.rds") %>%
@@ -57,19 +54,11 @@ hcm_adm3 <- vnm_adm3 %>%
 cat("Số xã/phường cũ trong GADM (3 tỉnh):", nrow(hcm_adm3), "\n")
 cat("Số region khớp NetCDF - GADM:", length(intersect(weather_hcm_raw$region, hcm_adm3$region)), "\n")
 
-# ============================================================
-# BƯỚC 4: ĐỌC SHAPEFILE PHƯỜNG/XÃ MỚI TP.HCM
-# ============================================================
-duong_dan_shp <- "data/spatial data/TPHCM_XA_2025_JUL_AP/TPHCM_XA_2025_10JUL2025.shp"
-
-hcm_wards <- st_read(duong_dan_shp) %>%
-  st_transform(4326)
+## BƯỚC 4: ĐỌC SHAPEFILE PHƯỜNG/XÃ MỚI TP.HCM ----------------------------------
 
 cat("Số phường/xã mới trong shapefile:", nrow(hcm_wards), "\n")
 
-# ============================================================
-# BƯỚC 5: SPATIAL JOIN - centroid GADM cũ -> phường/xã mới
-# ============================================================
+## BƯỚC 5: SPATIAL JOIN - centroid GADM cũ -> phường/xã mới --------------------
 gadm_centroids <- hcm_adm3 %>% st_centroid()
 
 region_to_ward <- st_join(
