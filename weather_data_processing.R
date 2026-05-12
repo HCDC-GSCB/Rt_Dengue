@@ -4,6 +4,8 @@ library(tidyverse)
 library(units)
 library(terra)
 library(writexl)
+library(ncmeta)
+library(glue)
 
 # TRÍCH XUẤT DỮ LIỆU THỜI TIẾT ERA5 THEO PHƯỜNG/XÃ TP.HCM MỚI -----------------
 
