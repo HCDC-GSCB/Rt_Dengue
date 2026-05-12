@@ -56,6 +56,9 @@ print(glue(
 ))
 
 ## BƯỚC 4: ĐỌC SHAPEFILE PHƯỜNG/XÃ MỚI TP.HCM ----------------------------------
+hcmc_shapefiles <- read_rds("data/spatial_data/hcmc_shapefiles.rds")
+
+hcm_wards <- hcmc_shapefiles$commune_168
 
 cat("Số phường/xã mới trong shapefile:", nrow(hcm_wards), "\n")
 
