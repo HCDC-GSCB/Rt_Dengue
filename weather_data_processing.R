@@ -17,44 +17,43 @@ nc_dat <- read_ncdf(
 ) %>%
   st_set_crs(4326)
 
-weather_df <- as.data.frame(nc_dat) %>%
-  as_tibble() %>%
+weather_df <- as_tibble(nc_dat) %>%
   mutate(
     region = as.character(region),
-    t2m    = as.numeric(t2m),
-    mn2t24 = as.numeric(mn2t24),
-    mx2t24 = as.numeric(mx2t24)
+    across(c(t2m, mn2t24, mx2t24), as.numeric)
   )
 
 ## BƯỚC 2: LỌC 3 TỈNH THUỘC TP.HCM MỚI ----------------------------------------
 
 # VNM.25 = TP.HCM cũ | VNM.9 = Bình Dương | VNM.7 = Bà Rịa - Vũng Tàu
-# ============================================================
-HCM_PREFIXES <- c("VNM\\.25\\.", "VNM\\.9\\.", "VNM\\.7\\.")
+NEW_HCMC_REGEX <- "VNM\\.(25|9|7)"
 
 weather_hcm_raw <- weather_df %>%
-  filter(grepl(paste(HCM_PREFIXES, collapse = "|"), region))
+  filter(str_starts(region, NEW_HCMC_REGEX))
 
-cat("Số region TP.HCM mới trong NetCDF:", n_distinct(weather_hcm_raw$region), "\n")
+print(glue(
+  "Số region TP.HCM mới trong NetCDF: {n_distinct(weather_hcm_raw$region)}"
+))
 
 ## BƯỚC 3: ĐỌC GADM LEVEL 3 - TẠO MAPPING region -> đơn vị cũ ------------------
 
 # GID_3 dạng "VNM.25.1.1_1" -> rút về "VNM.25.1_1" để khớp NetCDF
-# ============================================================
-vnm_adm3 <- read_rds("data/spatial data/gadm41_VNM_3_pk.rds") %>%
+vnm_adm3 <- read_rds("data/spatial_data/gadm41_VNM_3_pk.rds") %>%
   terra::unwrap() %>%
   st_as_sf() %>%
   st_transform(4326)
 
 hcm_adm3 <- vnm_adm3 %>%
-  filter(NAME_1 %in% c("Hồ Chí Minh", "Bình Dương", "Bà Rịa - Vũng Tàu")) %>%
+  filter(str_starts(GID_1, NEW_HCMC_REGEX)) %>%
   mutate(
-    region = sub("(VNM\\.\\d+\\.\\d+)\\.\\d+(_1$)", "\\1\\2", GID_3)
+    region = str_remove(GID_3, "\\.1")
   ) %>%
   select(region, GID_3, NAME_3, NAME_2, NAME_1, geometry)
 
-cat("Số xã/phường cũ trong GADM (3 tỉnh):", nrow(hcm_adm3), "\n")
-cat("Số region khớp NetCDF - GADM:", length(intersect(weather_hcm_raw$region, hcm_adm3$region)), "\n")
+print(glue("Số xã/phường cũ trong GADM (3 tỉnh): {nrow(hcm_adm3)}"))
+print(glue(
+  "Số region khớp NetCDF - GADM: {length(intersect(weather_hcm_raw$region, hcm_adm3$region))}"
+))
 
 ## BƯỚC 4: ĐỌC SHAPEFILE PHƯỜNG/XÃ MỚI TP.HCM ----------------------------------
 
