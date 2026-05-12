@@ -12,7 +12,7 @@ library(glue)
 ## BƯỚC 1: ĐỌC VÀ CHUẨN BỊ DỮ LIỆU NetCDF -------------------------------------
 
 nc_dat <- read_ncdf(
-  "data/weather/VNM-2-2017-2024-era5.nc",
+  "data/weather/VNM-2-2017-2025-era5.nc",
   var = c("t2m", "mn2t24", "mx2t24")
 ) %>%
   st_set_crs(4326)
