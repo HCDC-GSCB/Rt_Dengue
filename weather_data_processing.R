@@ -58,17 +58,17 @@ print(glue(
 ## BƯỚC 4: ĐỌC SHAPEFILE PHƯỜNG/XÃ MỚI TP.HCM ----------------------------------
 duong_dan_shp <- "data/spatial_data/TPHCM_XA_2025_JUL_AP/TPHCM_XA_2025_10JUL2025.shp"
 
-hcm_wards <- st_read(duong_dan_shp) %>%
+hcm_new_wards <- st_read(duong_dan_shp) %>%
   st_transform(4326)
 
-cat("Số phường/xã mới trong shapefile:", nrow(hcm_wards), "\n")
+cat("Số phường/xã mới trong shapefile:", nrow(hcm_new_wards), "\n")
 
 ## BƯỚC 5: SPATIAL JOIN - centroid GADM cũ -> phường/xã mới --------------------
 gadm_centroids <- hcm_adm3 %>% st_centroid()
 
 region_to_ward <- st_join(
   gadm_centroids,
-  hcm_wards %>% select(maXa, tenXa),
+  hcm_new_wards %>% select(maXa, tenXa),
   join = st_within
 ) %>%
   st_drop_geometry() %>%
@@ -81,7 +81,7 @@ cat("Số phường/xã mới có dữ liệu:", n_distinct(region_to_ward$maXa)
 # ============================================================
 # BƯỚC 5b: XỬ LÝ PHƯỜNG/XÃ BỊ THIẾU - GÁN THỦ CÔNG
 # ============================================================
-missing_wards <- hcm_wards %>%
+missing_wards <- hcm_new_wards %>%
   st_drop_geometry() %>%
   filter(!maXa %in% region_to_ward$maXa) %>%
   select(maXa, tenXa)
@@ -124,7 +124,7 @@ if (nrow(missing_wards) > 0) {
     cat("\n📍 Phường/xã còn lại dùng region gần nhất:\n")
     print(auto_fix)
 
-    auto_fix_sf <- hcm_wards %>%
+    auto_fix_sf <- hcm_new_wards %>%
       filter(maXa %in% auto_fix$maXa) %>%
       st_centroid()
     nearest_idx <- st_nearest_feature(auto_fix_sf, gadm_centroids)
@@ -172,5 +172,5 @@ df_ward <- weather_with_ward %>%
 cat("\n=== OUTPUT PHƯỜNG/XÃ ===\n")
 print(head(df_ward, 10))
 cat("Tổng hàng     :", nrow(df_ward), "\n")
-cat("Số phường/xã  :", n_distinct(df_ward$maXa), "/", nrow(hcm_wards), "\n")
+cat("Số phường/xã  :", n_distinct(df_ward$maXa), "/", nrow(hcm_new_wards), "\n")
 cat("Số tuần       :", n_distinct(df_ward$time), "\n")
