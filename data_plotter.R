@@ -25,6 +25,10 @@ ggplot() +
       left_join(sliced_era5, by = join_by(ma_xa == region)),
     mapping = aes(fill = t2m)
   ) +
-  geom_point(data = incidence_dat, mapping = aes(x = longitude, y = latitude)) +
+  geom_point(
+    data = incidence_dat %>% filter(date_hosp == sliced_era5$time[[1]]),
+    mapping = aes(x = longitude, y = latitude),
+    alpha = 0.5
+  ) +
   scale_fill_viridis_c() +
   coord_sf(ylim = c(10.25, NA))
