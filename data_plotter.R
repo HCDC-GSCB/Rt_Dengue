@@ -26,7 +26,8 @@ ggplot() +
     mapping = aes(fill = t2m)
   ) +
   geom_point(
-    data = incidence_dat %>% filter(date_hosp == sliced_era5$time[[1]]),
+    data = incidence_dat %>%
+      filter(date_hosp == as.Date(sliced_era5$time[[1]])),
     mapping = aes(x = longitude, y = latitude),
     alpha = 0.5
   ) +
