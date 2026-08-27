@@ -10,7 +10,7 @@ library(coga)
 library(EpiEstim)
 
 # Gọi các functions của EpiFilter:
-path_epifilter <- "package/EpiFilter/R files/main"
+path_epifilter <- "package/EpiFilter/R files"
 
 files.sources <- list.files(path = path_epifilter, full.names = TRUE)
   for (f in files.sources) {
