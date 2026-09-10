@@ -29,10 +29,10 @@ There are 2 main ways to calculate or estimate the instantaneous effective repro
 
 ## Renewal equation
 
-The renewal-based methods above were originally developed from demographic theory and population biology. They vary along three layers:
+The renewal-based methods above were originally developed from demographic theory and population biology. They vary along **three layers**:
 - the specification of $w$ (e.g., [Mills et al. 2025](https://doi.org/10.1111/2041-210X.70110), [Choo et al. 2026](https://doi.org/10.1371/journal.pcbi.1013820), [Siraj et al., 2017](https://doi.org/10.1371/journal.pntd.0005797), [Codeço et al. 2018](https://doi.org/10.1016/j.epidem.2018.05.011)), 
 - the observation model (Poisson vs. NegBin, delay correction, e.g., [EpiNow2](https://epiforecasts.io/EpiNow2/)), and 
-- the inference approach (Cori's sliding window used in `EpiEstim` vs. EpiFilter's recursive Bayesian filtering ([Parag 2021](https://doi.org/10.1371/journal.pcbi.1009347)))
+- the inference approach (Cori's sliding window used in `EpiEstim` vs. `EpiFilter`'s recursive Bayesian filtering ([Parag 2021](https://doi.org/10.1371/journal.pcbi.1009347)))
 
 ## Our chosen stack
 ...
