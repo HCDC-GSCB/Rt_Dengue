@@ -34,8 +34,10 @@ The renewal-based methods above were originally developed from demographic theor
 - the observation model (Poisson vs. NegBin, delay correction, e.g., [EpiNow2](https://epiforecasts.io/EpiNow2/)), and 
 - the inference approach (Cori's sliding window used in `EpiEstim` vs. `EpiFilter`'s recursive Bayesian filtering ([Parag 2021](https://doi.org/10.1371/journal.pcbi.1009347)))
 
-## Our chosen stack
-...
+
+## Evaluation
+
+$R_t$ estimations can be evaluated by the Accumulated Prediction Error (**APE**), the sum log probabilities of observing the true incidence from the predicted distribution, and Predicted Mean Squared Error (**PMSE**), average square errors between mean predictions and true incidence, following [Parag and Donnelly 2020](https://doi.org/10.1371/journal.pcbi.1007990) and [Parag et al., 2023](https://doi.org/10.1098/rspb.2023.1664). The one-step-ahead predictive distributions can be obtained using `EpiFilter`.
 
 ## Caveats
 
