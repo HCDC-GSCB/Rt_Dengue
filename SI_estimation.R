@@ -159,26 +159,3 @@ test_SI <- function(temps = c(25, 27, 28, 29, 30, 32),
     return(invisible(list(plot = p, data = df_plot)))
   }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

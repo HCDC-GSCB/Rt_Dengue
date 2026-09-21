@@ -1,23 +1,5 @@
-library(tidyverse)
-library(readxl)
-library(stars)
-library(sf)
-library(data.table)
-
-collated_era5 <- read_ncdf(
-  "data/weather/HCM-2-2017-2025-era5.nc",
-  make_units = FALSE
-)
-
-hcmc_shp2 <- st_read("data/spatial_data/gisvn/HCM-2.shp")
-
+# Bản đồ số ca
 sliced_era5 <- collated_era5 %>% slice("time", 1) %>% as.data.table()
-
-incidence_dat <- read_rds(
-  "data/incidence_geocoded/incidence_dat_filtered.rds"
-) %>%
-  mutate(date_hosp = as.Date(date_hosp))
-
 
 ggplot() +
   geom_sf(
@@ -33,3 +15,6 @@ ggplot() +
   ) +
   scale_fill_viridis_c() +
   coord_sf(ylim = c(10.25, NA))
+
+# Biểu đồ số ca mắc theo thời gian 
+
