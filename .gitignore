@@ -4,3 +4,5 @@
 .Ruserdata
 
 data/incidence_geocoded/*
+data/incidence_dat_filtered.rds
+data/incidence_geocoded_nofilter.rds
