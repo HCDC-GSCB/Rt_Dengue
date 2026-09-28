@@ -4,14 +4,7 @@
 #───────────────────────────────────────────────────────────────────────────────
 # Tham số
 #───────────────────────────────────────────────────────────────────────────────
-# Thứ tự 4 giai đoạn trong vector: [EIP, IIP, THM, TMH]
-# Tham số cho công thức EIP phụ thuộc T: rate_IM = b0 - b1*T
 b0 <- 7.9;  b1 <- 0.21
-
-# Ghi chú rate EIP không phụ thuộc T (ti-SI):
-#   0.23  theo Chan & Johansson (2012) — dùng cho dữ liệu THỰC
-#   0.067 ≈ mean(rate_td) tại T_mean Singapore — dùng cho mô phỏng
-
 U    <- 35    # Độ dài SI tối đa (ngày)
 T_lo <- 15    # Nhiệt độ tối thiểu sinh học Ae. aegypti (°C)
 T_hi <- 7.9 / 0.21  # ≈ 37.6°C — điểm singularity (rate_IM = 0)

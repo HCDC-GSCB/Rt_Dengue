@@ -1,17 +1,9 @@
 # Chuẩn bị các thư viện cần thiết:
- library(tidyverse)
- library(ggplot2)
- library(readxl)
- library(stringi)
- library(stringr)
- library(lubridate)
- library(scales)
- library(coga)
- library(EpiEstim)
- library(data.table)
- library(stars)
- library(sf)
+ pkgs <- c("tidyverse", "readxl", "stringi", "scales", "coga",
+          "EpiEstim", "data.table", "stars", "sf", "gtsummary")
 
+ invisible(lapply(pkgs, library, character.only = TRUE))
+ 
 # Gọi các functions của EpiFilter:
  path_epifilter <- "package/EpiFilter"
  files.sources <- list.files(path = path_epifilter, pattern = "\\.R$", full.names = TRUE)
@@ -33,11 +25,12 @@
 
 # Chuẩn bị các dữ liệu cần thiết
 # Đọc dữ liệu ca bệnh
- incidence_dat <- read_rds("data/incidence_dat_filtered.rds") 
+
+ incidence_dat <- read_rds("data/incidence_geocoded_fix_new_commune.rds")
 
 # Đọc dữ liệu thời tiết
  collated_era5 <- read_ncdf(
-   "data/weather/HCM-2-2017-2025-era5.nc",
+   "data/weather/HCM-2-2017-2025-era5.core_daily.nc",
    make_units = FALSE
  )
 

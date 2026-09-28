@@ -1,4 +1,6 @@
-# Bản đồ số ca
+source("clean data.R")
+
+# Bản đồ số ca (Hiện tại đang thiếu Côn Đảo)
 sliced_era5 <- collated_era5 %>% slice("time", 1) %>% as.data.table()
 
 ggplot() +
@@ -17,4 +19,3 @@ ggplot() +
   coord_sf(ylim = c(10.25, NA))
 
 # Biểu đồ số ca mắc theo thời gian 
-
