@@ -1,4 +1,6 @@
-source("clean data.R")
+source("./clean data.R")
+#source("SI_estimation.R")
+source("")
 
 # Bản đồ số ca (Hiện tại đang thiếu Côn Đảo)
 sliced_era5 <- collated_era5 %>% slice("time", 1) %>% as.data.table()

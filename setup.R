@@ -1,6 +1,7 @@
 # Chuẩn bị các thư viện cần thiết:
  pkgs <- c("tidyverse", "readxl", "stringi", "scales", "coga",
-          "EpiEstim", "data.table", "stars", "sf", "gtsummary")
+          "EpiEstim", "data.table", "stars", "sf", "gtsummary",
+          "stringr","forcats","gtsummary")
 
  invisible(lapply(pkgs, library, character.only = TRUE))
  

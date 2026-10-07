@@ -54,3 +54,7 @@ ward_daily_long <- incidence_dat %>%
   ) %>%
   arrange(new_commune_ward, date_hosp)
 
+# Làm sạch các cột đặc điểm của dân số tham gia nghiên cứu:
+
+
+
